@@ -1,0 +1,33 @@
+from scapy.all import sniff, IP, TCP, UDP, Raw
+
+def process_packet(packet):
+    if IP in packet:
+        src_ip = packet[IP].src
+        dst_ip = packet[IP].dst
+        proto = packet[IP].proto
+
+        if TCP in packet:
+            protocol = "TCP"
+        elif UDP in packet:
+            protocol = "UDP"
+        else:
+            protocol = "Other"
+
+        print(f"📦 Protocol: {protocol}")
+        print(f"🔵 Source IP: {src_ip}")
+        print(f"🔴 Destination IP: {dst_ip}")
+
+        # Print payload if present
+        if Raw in packet:
+            payload = packet[Raw].load
+            try:
+                print(f"📩 Payload: {payload.decode(errors='ignore')}")
+            except:
+                print("📩 Payload: [Unreadable binary data]")
+
+        print("-" * 60)
+
+print("🔍 Starting Comillas Negras Packet Sniffer (Press Ctrl+C to stop)...")
+
+# Start sniffing
+sniff(prn=process_packet, store=False)
